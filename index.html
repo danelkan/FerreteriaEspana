@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ferretería España – Libertad 2450, Montevideo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --rojo:#C0392B; --rojo-oscuro:#96281B; --amarillo:#F4C430;
+      --carbon:#141414; --gris:#2A2A2A; --gris-medio:#666;
+      --gris-claro:#F0EDEA; --blanco:#FAFAF8; --acento:#E8DDD0;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:var(--blanco);color:var(--carbon);overflow-x:hidden}
+
+    /* ── HERO CON VIDEO ── */
+    .hero{position:relative;min-height:100vh;display:flex;align-items:flex-end;overflow:hidden}
+    .hero-video-wrap{position:absolute;inset:0;z-index:0}
+    .hero-video-wrap video{width:100%;height:100%;object-fit:cover;object-position:center;filter:saturate(.65) brightness(.48)}
+    .hero-video-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.12) 0%,rgba(0,0,0,.08) 22%,rgba(0,0,0,.48) 62%,rgba(0,0,0,.92) 100%)}
+    .hero-noise{position:absolute;inset:0;z-index:1;opacity:.3;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E");background-size:200px}
+    .hero-line{position:absolute;left:60px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(192,57,43,.6) 30%,rgba(192,57,43,.6) 70%,transparent);z-index:2}
+    .hero-content{position:relative;z-index:3;width:100%;padding:0 80px 90px 80px;display:grid;grid-template-columns:1fr auto;align-items:flex-end;gap:60px}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--rojo);color:#fff;font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:7px 14px;border-radius:2px;margin-bottom:26px;width:fit-content;opacity:0;animation:slideUp .5s .35s ease forwards}
+    .hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(70px,9vw,134px);line-height:.88;color:var(--blanco);letter-spacing:.01em;opacity:0;animation:slideUp .6s .5s ease forwards}
+    .hero-title em{display:block;font-family:'Playfair Display',serif;font-style:italic;font-weight:600;font-size:clamp(38px,4.2vw,64px);color:var(--amarillo);letter-spacing:.02em;line-height:1.3}
+    .hero-desc{margin-top:24px;font-size:16px;font-weight:300;color:rgba(255,255,255,.7);max-width:420px;line-height:1.8;opacity:0;animation:slideUp .6s .65s ease forwards}
+    .hero-ctas{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap;opacity:0;animation:slideUp .6s .8s ease forwards}
+    .btn-wa{display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#fff;font-weight:700;font-size:14px;padding:16px 28px;border-radius:3px;text-decoration:none;transition:transform .2s,box-shadow .2s;letter-spacing:.02em}
+    .btn-wa:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,211,102,.3)}
+    .btn-outline{display:inline-flex;align-items:center;gap:10px;background:transparent;color:var(--blanco);font-weight:500;font-size:14px;padding:16px 28px;border-radius:3px;border:1px solid rgba(255,255,255,.3);text-decoration:none;transition:border-color .2s,background .2s}
+    .btn-outline:hover{border-color:rgba(255,255,255,.7);background:rgba(255,255,255,.05)}
+    .hero-metrics{display:flex;flex-direction:column;gap:12px;opacity:0;animation:slideLeft .7s .95s ease forwards}
+    .hero-metric{background:rgba(255,255,255,.08);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.1);border-left:3px solid var(--rojo);padding:16px 22px;border-radius:3px;min-width:185px}
+    .hero-metric-num{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--amarillo);line-height:1}
+    .hero-metric-label{font-size:10px;color:rgba(255,255,255,.5);margin-top:4px;letter-spacing:.1em;text-transform:uppercase}
+    .scroll-indicator{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:3;opacity:0;animation:fadeIn 1s 1.5s ease forwards}
+    .scroll-line{width:1px;height:44px;background:linear-gradient(to bottom,rgba(255,255,255,.7),transparent);margin:0 auto;animation:scrollPulse 2.2s ease infinite}
+    @keyframes scrollPulse{0%,100%{opacity:.5;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.08)}}
+
+    /* ── NAV ── */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 60px;background:rgba(20,20,20,.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.06)}
+    .nav-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.1em;color:var(--blanco);text-decoration:none}
+    .nav-logo span{color:var(--amarillo)}
+    .nav-links{display:flex;gap:32px;list-style:none}
+    .nav-links a{font-size:11px;font-weight:500;color:rgba(255,255,255,.55);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s}
+    .nav-links a:hover{color:var(--blanco)}
+    .nav-wa{display:flex;align-items:center;gap:7px;background:#25D366;color:#fff;font-size:11px;font-weight:700;padding:9px 16px;border-radius:3px;text-decoration:none;letter-spacing:.05em;transition:opacity .2s}
+    .nav-wa:hover{opacity:.85}
+
+    /* ── BAND ── */
+    .band{background:var(--rojo);color:#fff;padding:13px 80px;display:flex;gap:44px}
+    .band-item{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:500;white-space:nowrap;letter-spacing:.06em;text-transform:uppercase}
+
+    /* ── SECCIONES ── */
+    .section{padding:96px 80px}
+    .section-label{font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--rojo);margin-bottom:12px}
+    .section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,5.5vw,74px);line-height:.94;letter-spacing:.02em;color:var(--carbon)}
+
+    /* ── SERVICIOS ── */
+    #servicios{background:var(--blanco)}
+    .servicios-header{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:56px}
+    .servicios-intro{font-size:15px;font-weight:300;color:var(--gris-medio);line-height:1.85;padding-top:12px}
+    .servicios-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:#ddd}
+    .servicio-card{background:var(--blanco);padding:42px 34px;position:relative;overflow:hidden;transition:background .25s;cursor:default}
+    .servicio-card:hover{background:var(--gris-claro)}
+    .servicio-card::after{content:'';position:absolute;bottom:0;left:0;height:3px;width:0;background:var(--rojo);transition:width .4s ease}
+    .servicio-card:hover::after{width:100%}
+    .servicio-num{font-family:'Bebas Neue',sans-serif;font-size:50px;color:var(--acento);line-height:1;margin-bottom:12px}
+    .servicio-icon{font-size:28px;margin-bottom:11px;display:block}
+    .servicio-nombre{font-size:17px;font-weight:700;color:var(--carbon);margin-bottom:8px}
+    .servicio-desc{font-size:13px;font-weight:300;color:var(--gris-medio);line-height:1.75}
+
+    /* ── CATÁLOGO ── */
+    #catalogo{background:var(--carbon);display:grid;grid-template-columns:1fr 1fr;gap:0}
+    .catalogo-text{padding:96px 80px;display:flex;flex-direction:column;justify-content:center}
+    .catalogo-text .section-title{color:var(--blanco)}
+    .catalogo-text .section-label{color:var(--amarillo)}
+    .catalogo-body{font-size:15px;font-weight:300;color:rgba(255,255,255,.58);line-height:1.9;margin-top:20px;max-width:400px}
+    .catalogo-features{list-style:none;margin-top:34px;display:flex;flex-direction:column;gap:13px}
+    .catalogo-features li{display:flex;align-items:center;gap:11px;font-size:14px;color:rgba(255,255,255,.72)}
+    .feat-dot{width:5px;height:5px;border-radius:50%;background:var(--amarillo);flex-shrink:0}
+    .catalogo-visual{position:relative;overflow:hidden;background:var(--gris);min-height:520px;display:flex;align-items:center;justify-content:center;padding:40px}
+    .phone-frame{width:210px;background:#1a1a1a;border-radius:26px;border:5px solid #333;overflow:hidden;box-shadow:0 36px 72px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.04);position:relative;z-index:2}
+    .phone-header{background:var(--rojo);padding:14px 16px;text-align:center}
+    .phone-header-name{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;color:#fff}
+    .phone-section-label{background:#1e1e1e;padding:8px 14px 5px;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase}
+    .phone-cat-item{display:flex;align-items:center;gap:11px;padding:11px 13px;border-bottom:1px solid rgba(255,255,255,.04)}
+    .cat-icon{font-size:19px}
+    .cat-name{font-size:10px;font-weight:600;color:rgba(255,255,255,.82)}
+    .cat-price{font-size:9px;color:var(--amarillo);margin-top:2px}
+    .phone-wa-btn{background:#25D366;margin:12px;border-radius:4px;padding:9px;text-align:center;font-size:9px;font-weight:700;color:#fff;letter-spacing:.05em}
+    .tablet-frame{width:280px;background:#1a1a1a;border-radius:14px;border:5px solid #303030;overflow:hidden;box-shadow:0 36px 72px rgba(0,0,0,.65);position:absolute;right:16px;bottom:40px;z-index:1;transform:rotate(1.5deg)}
+    .tablet-header{background:#242424;padding:9px 13px;display:flex;align-items:center;gap:7px;border-bottom:1px solid rgba(255,255,255,.06)}
+    .tablet-dot{width:7px;height:7px;border-radius:50%}
+    .tablet-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#2e2e2e}
+    .tablet-product{background:#1f1f1f;padding:13px 9px;text-align:center}
+    .tablet-product-icon{font-size:20px}
+    .tablet-product-name{font-size:8px;color:rgba(255,255,255,.55);margin-top:5px}
+    .tablet-product-price{font-size:9px;color:var(--amarillo);margin-top:2px;font-weight:700}
+
+    /* ── NOSOTROS ── */
+    #nosotros{background:var(--gris-claro);padding:96px 80px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+    .nosotros-body{font-size:15px;font-weight:300;color:var(--gris-medio);line-height:1.9;margin-top:20px}
+    .nosotros-stats{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:44px;background:#ddd}
+    .stat-box{background:var(--blanco);padding:26px 22px;transition:background .2s}
+    .stat-box:hover{background:#fff}
+    .stat-num{font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--rojo);line-height:1}
+    .stat-label{font-size:11px;color:var(--gris-medio);margin-top:5px;letter-spacing:.04em}
+    .quote-box{background:var(--carbon);border-radius:4px;padding:52px 40px;position:relative;overflow:hidden}
+    .quote-box::before{content:'\201C';position:absolute;top:-30px;left:20px;font-family:'Playfair Display',serif;font-size:200px;color:rgba(255,255,255,.03);line-height:1;pointer-events:none}
+    .quote-box blockquote{font-family:'Playfair Display',serif;font-style:italic;font-size:19px;color:rgba(255,255,255,.86);line-height:1.65;position:relative;z-index:1}
+    .quote-box cite{display:block;margin-top:18px;font-size:10px;font-style:normal;color:rgba(255,255,255,.3);letter-spacing:.14em;text-transform:uppercase}
+
+    /* ── RESEÑAS ── */
+    #resenas{background:var(--blanco);padding:96px 80px}
+    .resenas-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:52px}
+    .rating-pill{display:flex;align-items:center;gap:14px;background:var(--carbon);padding:18px 26px;border-radius:4px}
+    .rating-num{font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--amarillo);line-height:1}
+    .rating-stars{font-size:17px;color:var(--amarillo);letter-spacing:2px}
+    .rating-count{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px}
+    .resenas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .resena-card{background:var(--gris-claro);border-radius:3px;padding:30px 26px;border-top:3px solid var(--rojo);transition:transform .2s,box-shadow .2s}
+    .resena-card:hover{transform:translateY(-5px);box-shadow:0 16px 44px rgba(0,0,0,.07)}
+    .resena-stars{font-size:14px;color:var(--amarillo);margin-bottom:15px;letter-spacing:2px}
+    .resena-text{font-size:14px;font-weight:300;color:var(--gris-medio);line-height:1.8;font-style:italic;margin-bottom:22px}
+    .resena-autor{display:flex;align-items:center;gap:11px}
+    .resena-avatar{width:34px;height:34px;border-radius:50%;background:var(--rojo);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;flex-shrink:0}
+    .resena-nombre{font-size:13px;font-weight:600;color:var(--carbon)}
+    .resena-fecha{font-size:11px;color:var(--gris-medio);margin-top:1px}
+
+    /* ── DELIVERY ── */
+    .delivery-band{background:var(--amarillo);padding:52px 80px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:32px}
+    .delivery-icon{font-size:52px}
+    .delivery-text h3{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--carbon);letter-spacing:.04em}
+    .delivery-text p{font-size:14px;color:var(--gris);font-weight:300;margin-top:4px}
+
+    /* ── CONTACTO ── */
+    #contacto{background:var(--carbon);padding:96px 80px;display:grid;grid-template-columns:1fr 1fr;gap:80px}
+    .contacto-text .section-title{color:var(--blanco)}
+    .contacto-text .section-label{color:var(--rojo)}
+    .contacto-body{font-size:14px;font-weight:300;color:rgba(255,255,255,.52);line-height:1.9;margin-top:18px}
+    .info-list{list-style:none;margin-top:36px;display:flex;flex-direction:column;gap:18px}
+    .info-item{display:flex;align-items:flex-start;gap:14px;padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,.06)}
+    .info-icon{width:38px;height:38px;background:rgba(255,255,255,.05);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .info-data strong{display:block;font-size:10px;font-weight:700;color:var(--blanco);letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px}
+    .info-data span{font-size:13px;font-weight:300;color:rgba(255,255,255,.48)}
+    .wa-cta{margin-top:40px;display:inline-flex;align-items:center;gap:13px;background:#25D366;color:#fff;font-weight:700;font-size:14px;padding:17px 30px;border-radius:4px;text-decoration:none;transition:transform .2s,box-shadow .2s;width:fit-content}
+    .wa-cta:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(37,211,102,.2)}
+    .map-box{background:var(--gris);border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:400px;position:relative;padding:40px;overflow:hidden}
+    .map-box::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 29px,rgba(255,255,255,.018) 29px,rgba(255,255,255,.018) 30px),repeating-linear-gradient(90deg,transparent,transparent 29px,rgba(255,255,255,.018) 29px,rgba(255,255,255,.018) 30px)}
+    .map-pin-icon{font-size:48px;display:block;position:relative;z-index:1;animation:pinBounce 2.2s ease infinite}
+    @keyframes pinBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+    .map-address-text{text-align:center;position:relative;z-index:1}
+    .map-address-text strong{display:block;font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--blanco);letter-spacing:.06em}
+    .map-address-text span{font-size:12px;color:rgba(255,255,255,.38)}
+    .map-btn{display:inline-flex;align-items:center;gap:7px;background:var(--rojo);color:#fff;font-size:11px;font-weight:600;padding:11px 20px;border-radius:3px;text-decoration:none;position:relative;z-index:1;letter-spacing:.04em;transition:opacity .2s}
+    .map-btn:hover{opacity:.85}
+
+    /* ── FOOTER ── */
+    footer{background:#0d0d0d;padding:32px 80px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.04)}
+    .footer-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--blanco);letter-spacing:.1em}
+    .footer-logo span{color:var(--rojo)}
+    .footer-copy{font-size:11px;color:rgba(255,255,255,.22)}
+
+    /* ── ANIMACIONES ── */
+    @keyframes slideUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes slideLeft{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:960px){
+      nav{padding:15px 22px}
+      .nav-links{display:none}
+      .hero-content{grid-template-columns:1fr;padding:0 24px 60px}
+      .hero-metrics{flex-direction:row;flex-wrap:wrap}
+      .hero-line{left:20px}
+      .band{padding:12px 24px;gap:18px}
+      .section{padding:64px 24px}
+      .servicios-header{grid-template-columns:1fr}
+      .servicios-grid{grid-template-columns:1fr 1fr}
+      #catalogo{grid-template-columns:1fr}
+      .catalogo-text{padding:64px 24px}
+      .catalogo-visual{min-height:380px}
+      #nosotros{grid-template-columns:1fr;padding:64px 24px}
+      #resenas{padding:64px 24px}
+      .resenas-header{flex-direction:column;align-items:flex-start;gap:20px}
+      .resenas-grid{grid-template-columns:1fr}
+      .delivery-band{grid-template-columns:1fr;text-align:center;padding:36px 24px}
+      #contacto{grid-template-columns:1fr;padding:64px 24px}
+      footer{flex-direction:column;gap:10px;text-align:center;padding:24px}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">FERRETERÍA <span>ESPAÑA</span></a>
+  <ul class="nav-links">
+    <li><a href="#servicios">Productos</a></li>
+    <li><a href="#catalogo">Catálogo</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#resenas">Reseñas</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a href="https://wa.me/59899000000" target="_blank" class="nav-wa">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    Escribinos
+  </a>
+</nav>
+
+<section class="hero">
+  <div class="hero-video-wrap">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="video-hero.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <div class="hero-noise"></div>
+  <div class="hero-line"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <svg width="7" height="7" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+        Montevideo, Uruguay
+      </div>
+      <h1 class="hero-title">Ferretería<em>España</em>Libertad 2450</h1>
+      <p class="hero-desc">Tu ferretería de barrio con todo lo que necesitás para la casa, la obra o el taller. Atención personalizada, precios justos y delivery.</p>
+      <div class="hero-ctas">
+        <a href="https://wa.me/59899000000" target="_blank" class="btn-wa">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Consultá por WhatsApp
+        </a>
+        <a href="#servicios" class="btn-outline">Ver productos →</a>
+      </div>
+    </div>
+    <div class="hero-metrics">
+      <div class="hero-metric"><div class="hero-metric-num">5K+</div><div class="hero-metric-label">Productos disponibles</div></div>
+      <div class="hero-metric"><div class="hero-metric-num">⭐ 4.8</div><div class="hero-metric-label">Calificación Google</div></div>
+      <div class="hero-metric"><div class="hero-metric-num">🚚</div><div class="hero-metric-label">Delivery a domicilio</div></div>
+    </div>
+  </div>
+  <div class="scroll-indicator"><div class="scroll-line"></div></div>
+</section>
+
+<div class="band">
+  <div class="band-item"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><circle cx="12" cy="11" r="3"/></svg>Libertad 2450, Montevideo</div>
+  <div class="band-item"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Lun–Vie: 8:30–19:00 · Sáb: 9:00–13:00</div>
+  <div class="band-item"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Delivery disponible</div>
+  <div class="band-item"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>+5.000 productos</div>
+</div>
+
+<section id="servicios" class="section">
+  <div class="servicios-header">
+    <div><p class="section-label">Nuestros rubros</p><h2 class="section-title">Todo lo que<br>necesitás,<br>en un lugar</h2></div>
+    <p class="servicios-intro">Desde una tuerca hasta una herramienta eléctrica. Atendemos particulares, constructoras y talleres con la misma calidad y atención de siempre.</p>
+  </div>
+  <div class="servicios-grid">
+    <div class="servicio-card"><div class="servicio-num">01</div><span class="servicio-icon">🔨</span><div class="servicio-nombre">Herramientas</div><p class="servicio-desc">Manuales y eléctricas para obra, taller y uso doméstico. Las mejores marcas disponibles.</p></div>
+    <div class="servicio-card"><div class="servicio-num">02</div><span class="servicio-icon">💡</span><div class="servicio-nombre">Material Eléctrico</div><p class="servicio-desc">Cables, llaves, tomacorrientes e interruptores. Todo para instalaciones eléctricas.</p></div>
+    <div class="servicio-card"><div class="servicio-num">03</div><span class="servicio-icon">🚿</span><div class="servicio-nombre">Sanitaria</div><p class="servicio-desc">Caños, grifería, conexiones y accesorios para baños, cocinas y obras de plomería.</p></div>
+    <div class="servicio-card"><div class="servicio-num">04</div><span class="servicio-icon">🎨</span><div class="servicio-nombre">Pinturas</div><p class="servicio-desc">Látex, esmaltes, barnices y accesorios. Asesoramos en colores para cada superficie.</p></div>
+    <div class="servicio-card"><div class="servicio-num">05</div><span class="servicio-icon">🔒</span><div class="servicio-nombre">Cerrajería</div><p class="servicio-desc">Candados, cerraduras, cilindros y herrajes para puertas y ventanas de todo tipo.</p></div>
+    <div class="servicio-card"><div class="servicio-num">06</div><span class="servicio-icon">🏗️</span><div class="servicio-nombre">Construcción</div><p class="servicio-desc">Tornillería, adhesivos, masillas, impermeabilizantes y todo para obra de cualquier escala.</p></div>
+  </div>
+</section>
+
+<section id="catalogo">
+  <div class="catalogo-text">
+    <p class="section-label">Catálogo digital</p>
+    <h2 class="section-title">Sus productos,<br>en la palma<br>de su mano</h2>
+    <p class="catalogo-body">Con la web, sus clientes ven qué tienen disponible, a qué precio, y consultan directo — sin que usted tenga que responder lo mismo veinte veces por día.</p>
+    <ul class="catalogo-features">
+      <li><span class="feat-dot"></span>Catálogo con fotos y precios</li>
+      <li><span class="feat-dot"></span>Consultas directo a WhatsApp con un toque</li>
+      <li><span class="feat-dot"></span>Horarios y dirección siempre visibles</li>
+      <li><span class="feat-dot"></span>Se actualiza cuando usted quiera</li>
+      <li><span class="feat-dot"></span>Se ve bien en cualquier celular</li>
+      <li><span class="feat-dot"></span>Aparece en Google cuando buscan "ferretería cerca"</li>
+    </ul>
+  </div>
+  <div class="catalogo-visual">
+    <div class="phone-frame">
+      <div class="phone-header"><div class="phone-header-name">FERRETERÍA ESPAÑA</div></div>
+      <div class="phone-section-label">Categorías</div>
+      <div class="phone-cat-item"><span class="cat-icon">🔨</span><div><div class="cat-name">Herramientas</div><div class="cat-price">Desde $290</div></div></div>
+      <div class="phone-cat-item"><span class="cat-icon">💡</span><div><div class="cat-name">Material Eléctrico</div><div class="cat-price">Desde $85</div></div></div>
+      <div class="phone-cat-item"><span class="cat-icon">🎨</span><div><div class="cat-name">Pinturas</div><div class="cat-price">Desde $420</div></div></div>
+      <div class="phone-cat-item"><span class="cat-icon">🚿</span><div><div class="cat-name">Sanitaria</div><div class="cat-price">Desde $140</div></div></div>
+      <div class="phone-wa-btn">💬 CONSULTÁ POR WHATSAPP</div>
+    </div>
+    <div class="tablet-frame">
+      <div class="tablet-header"><div class="tablet-dot" style="background:#ff5f57"></div><div class="tablet-dot" style="background:#febc2e"></div><div class="tablet-dot" style="background:#28c840"></div></div>
+      <div class="tablet-grid">
+        <div class="tablet-product"><div class="tablet-product-icon">🔧</div><div class="tablet-product-name">Destornillador</div><div class="tablet-product-price">$185</div></div>
+        <div class="tablet-product"><div class="tablet-product-icon">🪛</div><div class="tablet-product-name">Pinza</div><div class="tablet-product-price">$290</div></div>
+        <div class="tablet-product"><div class="tablet-product-icon">🔩</div><div class="tablet-product-name">Tornillería</div><div class="tablet-product-price">Desde $25</div></div>
+        <div class="tablet-product"><div class="tablet-product-icon">💡</div><div class="tablet-product-name">Cable 2.5mm</div><div class="tablet-product-price">$38/m</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="delivery-band">
+  <div class="delivery-icon">🚚</div>
+  <div class="delivery-text"><h3>Delivery a tu puerta</h3><p>Hacé tu pedido por WhatsApp y te lo llevamos. Sin complicaciones.</p></div>
+  <a href="https://wa.me/59899000000" target="_blank" class="btn-wa" style="white-space:nowrap">Pedir por WhatsApp →</a>
+</div>
+
+<section id="nosotros">
+  <div>
+    <p class="section-label">Quiénes somos</p>
+    <h2 class="section-title">Años de historia<br>en el barrio</h2>
+    <p class="nosotros-body">Somos una ferretería de barrio con años de experiencia atendiendo vecinos, familias y profesionales de la construcción en Montevideo. Nos conocen por el trato cercano, los precios justos y la variedad de productos.<br><br>Si necesitás asesoramiento, lo damos. Si necesitás que te llevemos los materiales, lo hacemos.</p>
+    <div class="nosotros-stats">
+      <div class="stat-box"><div class="stat-num">5K+</div><div class="stat-label">Productos disponibles</div></div>
+      <div class="stat-box"><div class="stat-num">4.8★</div><div class="stat-label">Calificación Google</div></div>
+      <div class="stat-box"><div class="stat-num">6</div><div class="stat-label">Días abiertos por semana</div></div>
+      <div class="stat-box"><div class="stat-num">🚚</div><div class="stat-label">Delivery a domicilio</div></div>
+    </div>
+  </div>
+  <div class="quote-box">
+    <blockquote>"El lugar donde siempre encontrás lo que necesitás para tu casa o tu obra. Atención rápida, buena variedad y precios que no te sorprenden."</blockquote>
+    <cite>— Lo que dicen nuestros clientes en Google</cite>
+  </div>
+</section>
+
+<section id="resenas">
+  <div class="resenas-header">
+    <div><p class="section-label">Lo que dice la gente</p><h2 class="section-title">Reseñas Google</h2></div>
+    <div class="rating-pill"><div class="rating-num">4.8</div><div><div class="rating-stars">★★★★★</div><div class="rating-count">Google Maps · Montevideo</div></div></div>
+  </div>
+  <div class="resenas-grid">
+    <div class="resena-card"><div class="resena-stars">★★★★★</div><p class="resena-text">"Excelente atención, siempre tienen lo que necesito. El delivery es muy práctico, llegó rápido y en perfectas condiciones."</p><div class="resena-autor"><div class="resena-avatar">M</div><div><div class="resena-nombre">Martín G.</div><div class="resena-fecha">Reseña en Google</div></div></div></div>
+    <div class="resena-card"><div class="resena-stars">★★★★★</div><p class="resena-text">"Tienen de todo y los que atienden conocen los productos. Te orientan bien y sin apurarte. Muy recomendable."</p><div class="resena-autor"><div class="resena-avatar">A</div><div><div class="resena-nombre">Ana L.</div><div class="resena-fecha">Reseña en Google</div></div></div></div>
+    <div class="resena-card"><div class="resena-stars">★★★★★</div><p class="resena-text">"Buena ferretería, precios justos y trato inmejorable. La usamos para la obra y siempre encontramos todo lo que precisamos."</p><div class="resena-autor"><div class="resena-avatar">R</div><div><div class="resena-nombre">Roberto F.</div><div class="resena-fecha">Reseña en Google</div></div></div></div>
+  </div>
+</section>
+
+<section id="contacto">
+  <div class="contacto-text">
+    <p class="section-label">¿Cómo llegamos?</p>
+    <h2 class="section-title">Visitanos o<br>escribinos</h2>
+    <p class="contacto-body">Estamos en el barrio, siempre disponibles. Ya sea que vengas en persona, nos llames o nos escribas, respondemos rápido.</p>
+    <ul class="info-list">
+      <li class="info-item"><div class="info-icon">📍</div><div class="info-data"><strong>Dirección</strong><span>Libertad 2450, Montevideo, Uruguay</span></div></li>
+      <li class="info-item"><div class="info-icon">🕐</div><div class="info-data"><strong>Horario</strong><span>Lun–Vie: 8:30–19:00 hs · Sáb: 9:00–13:00 hs</span></div></li>
+      <li class="info-item"><div class="info-icon">🚚</div><div class="info-data"><strong>Delivery</strong><span>Pedidos por WhatsApp con entrega a domicilio</span></div></li>
+    </ul>
+    <a href="https://wa.me/59899000000" target="_blank" class="wa-cta">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Escribir por WhatsApp
+    </a>
+  </div>
+  <div class="map-box">
+    <span class="map-pin-icon">📍</span>
+    <div class="map-address-text"><strong>Libertad 2450</strong><span>Montevideo, Uruguay</span></div>
+    <a href="https://maps.google.com/?q=Libertad+2450+Montevideo+Uruguay" target="_blank" class="map-btn">Abrir en Google Maps →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">FERRETERÍA <span>ESPAÑA</span></div>
+  <div class="footer-copy">© 2025 · Libertad 2450, Montevideo · Todos los derechos reservados</div>
+</footer>
+
+</body>
+</html>
